@@ -54,6 +54,7 @@ const osThreadAttr_t defaultTask_attributes = {
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
 void StartDefaultTask(void *argument);
 
 /* USER CODE BEGIN PFP */
@@ -93,6 +94,7 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+  MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -180,6 +182,25 @@ void SystemClock_Config(void)
   }
 }
 
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
+{
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+
+  /* USER CODE END MX_GPIO_Init_1 */
+
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  /* USER CODE END MX_GPIO_Init_2 */
+}
+
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
@@ -191,21 +212,16 @@ void SystemClock_Config(void)
   * @retval None
   */
 /* USER CODE END Header_StartDefaultTask */
-/**
-     * @brief  Main task thread that handles the default application logic.
-     * @param  argument Pointer to task arguments passed during thread creation.
-     * @warning Do not use HAL_Delay() inside this function as it blocks the RTOS. Use osDelay() instead.
-     */
-    void StartDefaultTask(void *argument) {
-        /* Infinite loop */
-        for(;;) {
-            // Assuming PC13 is configured as GPIO Output (common for Blue Pill)
-            HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-            
-            // Yield the thread for 1000 RTOS ticks (typically 1 second)
-            osDelay(1000); 
-        }
-    }
+void StartDefaultTask(void *argument)
+{
+  /* USER CODE BEGIN 5 */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END 5 */
+}
 
 /**
   * @brief  Period elapsed callback in non blocking mode
