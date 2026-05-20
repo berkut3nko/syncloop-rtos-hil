@@ -83,7 +83,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+  HAL_DBGMCU_EnableDBGSleepMode();
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -223,17 +223,22 @@ static void MX_GPIO_Init(void)
   * @param  argument: Not used
   * @retval None
   */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void *argument)
-{
-  /* USER CODE BEGIN 5 */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END 5 */
-}
+/* USER CODE END Header_StartDefaultTask
+  * @brief  Main task thread that handles the default application logic.
+  * @param  argument Pointer to task arguments passed during thread creation.
+  * @warning Do not use HAL_Delay() inside this function as it blocks the RTOS. Use osDelay() instead.
+  */
+    void StartDefaultTask(void *argument) {
+        /* Infinite loop */
+        for(;;) {
+            // Assuming PC13 is configured as GPIO Output (common for Blue Pill)
+            HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+            
+            // Yield the thread for 1000 RTOS ticks (typically 1 second)
+            osDelay(1000); 
+        }
+    }
+
 
 /**
   * @brief  Period elapsed callback in non blocking mode
