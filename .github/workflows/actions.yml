@@ -7,12 +7,13 @@ on:
     branches: [ "main", "master" ]
 
 jobs:
+  # Job 1: Build and run tests on the host (Ubuntu)
   run-tests:
     name: Build & Run Unit Tests (Host)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Build Tools
         run: |
@@ -20,7 +21,7 @@ jobs:
           sudo apt-get install -y cmake ninja-build build-essential
 
       - name: Configure CMake for Testing
-        run: cmake -B build_test -G Ninja -DBUILD_TESTING=ON
+        run: CC=gcc cmake -B build_test -G Ninja -DBUILD_TESTING=ON
 
       - name: Build Tests
         run: cmake --build build_test
@@ -29,12 +30,13 @@ jobs:
         working-directory: build_test
         run: ctest --output-on-failure
 
+  # Job 2: Cross-compile firmware for STM32
   build-firmware:
     name: Cross-Compile Firmware (STM32F1)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install ARM GCC Toolchain & Ninja
         run: |
@@ -48,7 +50,7 @@ jobs:
         run: cmake --build build
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: firmware-binaries
           path: |
