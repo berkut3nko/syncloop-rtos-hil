@@ -44,7 +44,8 @@ jobs:
           sudo apt-get install -y gcc-arm-none-eabi cmake ninja-build
 
       - name: Configure CMake for STM32
-        run: cmake -B build -G Ninja
+        # Explicitly passing the toolchain file so CMake uses arm-none-eabi-gcc instead of native cc
+        run: cmake -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=cmake/gcc-arm-none-eabi.cmake
 
       - name: Build Firmware
         run: cmake --build build
