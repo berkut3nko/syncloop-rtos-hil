@@ -1,0 +1,57 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  run-tests:
+    name: Build & Run Unit Tests (Host)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Build Tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build build-essential
+
+      - name: Configure CMake for Testing
+        run: cmake -B build_test -G Ninja -DBUILD_TESTING=ON
+
+      - name: Build Tests
+        run: cmake --build build_test
+
+      - name: Run CTest
+        working-directory: build_test
+        run: ctest --output-on-failure
+
+  build-firmware:
+    name: Cross-Compile Firmware (STM32F1)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install ARM GCC Toolchain & Ninja
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-arm-none-eabi cmake ninja-build
+
+      - name: Configure CMake for STM32
+        run: cmake -B build -G Ninja
+
+      - name: Build Firmware
+        run: cmake --build build
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: firmware-binaries
+          path: |
+            build/*.elf
+            build/*.bin
+            build/*.hex
